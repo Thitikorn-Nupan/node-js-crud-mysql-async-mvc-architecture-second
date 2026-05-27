@@ -1,7 +1,6 @@
 const {createLogger,format,transports} = require('winston')
 const path = require('path')
 class Logging {
-
     static get logger() { // method static
         return createLogger({
             level: 'silly' ,
@@ -15,13 +14,6 @@ class Logging {
             ]
         }) // createLogger({})
     } // get logger()
-
-    static get path () {
-        return path
-    }
-
 }
-
 module.exports = Logging
-
 // Logging.logger.info("test logging level info")

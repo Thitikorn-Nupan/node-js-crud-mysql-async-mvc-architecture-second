@@ -1,7 +1,8 @@
-const pooling = require('../connect/connect-database')
+const pooling = require('../connect/database-connect')
 const log = require('../log/logging').logger
-const directSql = require('../service/direct-sql')
-class Crud {
+const directSql = require('./direct-sql-service')
+
+class CrudService {
     formatDatetimeSql = () => {
         const dateObj = new Date();
         let year = dateObj.getFullYear();
@@ -22,35 +23,12 @@ class Crud {
         // To make sure the second always has 2-character-format
         return `${year}/${month}/${date} ${hour}:${minute}:${second}`
     }
-    create = (productName , productPrice , productStatus , productBuild) => {
-        return new Promise((resolve, reject) => {
-            pooling.query(directSql.create , [productName , productPrice , productStatus , productBuild] , (error , info) => {
-                console.log(info)/*
-                                    [
-                                    {
-                        toy_id: 5,
-                        toy_product_name: 'Java Language',
-                        toy_product_price: '9000.00',
-                        toy_product_status: 'use',
-                        toy_product_build: 2023-06-27T12:19:30.000Z
-                      }
-                    ]
-                */
-                if (error) {
-                    log.debug("function create(Promise({})) have the problem and cause : "+error.message)
-                    throw error
-                }
-                else {
-                    return resolve(info)
-                }
-            })
-        }) // Promise
-    }
 
-    update = (productName , productPrice , productStatus , toyId) => {
+    create = (productName, productPrice, productStatus, productBuild) => {
         return new Promise((resolve, reject) => {
-            pooling.query(directSql.update , [productName , productPrice , productStatus,toyId] , (error , info) => {
-                console.log(info)/*
+            pooling.query(directSql.create, [productName, productStatus, productPrice, productBuild], (error, info) => {
+                /*
+                info
                 ResultSetHeader {
                           fieldCount: 0,
                           affectedRows: 1,
@@ -62,10 +40,22 @@ class Crud {
                         }
                 */
                 if (error) {
-                    log.debug("function update(Promise({})) have the problem and cause : "+error.message)
+                    log.debug("function create(Promise({})) have the problem and cause : " + error.message)
                     throw error
+                } else {
+                    return resolve(info)
                 }
-                else {
+            })
+        }) // Promise
+    }
+
+    update = (productName, productPrice, productStatus, toyId) => {
+        return new Promise((resolve, reject) => {
+            pooling.query(directSql.update, [productName, productPrice, productStatus, toyId], (error, info) => {
+                if (error) {
+                    log.debug("function update(Promise({})) have the problem and cause : " + error.message)
+                    throw error
+                } else {
                     return resolve(info)
                 }
             })
@@ -74,12 +64,11 @@ class Crud {
 
     reads = () => {
         return new Promise((resolve, reject) => {
-            pooling.query(directSql.reads , (error, info) => {
+            pooling.query(directSql.reads, (error, info) => {
                 if (error) {
-                    log.debug("function reads(Promise({})) have the problem and cause : "+error.message)
+                    log.debug("function reads(Promise({})) have the problem and cause : " + error.message)
                     throw error
-                }
-                else {
+                } else {
                     return resolve(info)
                 }
             }) // ended query
@@ -88,13 +77,12 @@ class Crud {
 
     read = (toyId) => {
         return new Promise((resolve, reject) => {
-            pooling.query(directSql.read ,[toyId], (error, info) => {
+            pooling.query(directSql.read, [toyId], (error, info) => {
                 console.log(info)
                 if (error) {
-                    log.debug("function read(Promise({})) have the problem and cause : "+error.message)
+                    log.debug("function read(Promise({})) have the problem and cause : " + error.message)
                     throw error
-                }
-                else {
+                } else {
                     return resolve(info)
                 }
             }) // ended query
@@ -103,18 +91,16 @@ class Crud {
 
     delete = (toyId) => {
         return new Promise((resolve, reject) => {
-            pooling.query(directSql.delete ,[toyId], (error, info) => {
+            pooling.query(directSql.delete, [toyId], (error, info) => {
                 console.log(info)
                 if (error) {
-                    log.debug("function delete(Promise({})) have the problem and cause : "+error.message)
+                    log.debug("function delete(Promise({})) have the problem and cause : " + error.message)
                     throw error
-                }
-                else {
+                } else {
                     return resolve(info)
                 }
             }) // ended query
         }) // ended returns
     }
 }
-
-module.exports = Crud
+module.exports = CrudService
